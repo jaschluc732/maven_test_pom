@@ -1,0 +1,22 @@
+---
+- hosts: webservers
+  become: True
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+      
+    - name: enabled mode_rewrite
+      apache2_module: name=rewrite state=present
+      notify: restart apache2 
+    
+    - name: Copy files to remote host
+      copy:
+        src: /var/lib/jenkins/workspace/ansible_deploy/multi3/target/
+        dest: /root/apache-tomcat-9.0.46/webapps
+           
+  handlers:
+    - name: restart apache2
+      service: 
+        name: apache2 
+        state: restarted
+... 
